@@ -25,7 +25,7 @@ const MobileNavbar = ({ openMenu, setOpenMenu }: MobileNavbarProps) => {
         <li
           onClick={async () => {
             setOpenMenu(false);
-            await router.push("/");
+            await router.push("/").finally();
           }}
           className="flex cursor-pointer items-center justify-start space-x-4"
         >
@@ -36,7 +36,7 @@ const MobileNavbar = ({ openMenu, setOpenMenu }: MobileNavbarProps) => {
         <li
           onClick={async () => {
             setOpenMenu(false);
-            await router.push("/about");
+            await router.push("/about").finally();
           }}
           className="flex cursor-pointer items-center justify-start space-x-4"
         >
@@ -47,7 +47,7 @@ const MobileNavbar = ({ openMenu, setOpenMenu }: MobileNavbarProps) => {
         <li
           onClick={async () => {
             setOpenMenu(false);
-            await router.push("/shop");
+            await router.push("/shop").finally();
           }}
           className="flex cursor-pointer items-center justify-start space-x-4"
         >
@@ -58,7 +58,7 @@ const MobileNavbar = ({ openMenu, setOpenMenu }: MobileNavbarProps) => {
         <li
           onClick={async () => {
             setOpenMenu(false);
-            await router.push("/events");
+            await router.push("/events").finally();
           }}
           className="flex cursor-pointer items-center justify-start space-x-4"
         >
@@ -69,7 +69,7 @@ const MobileNavbar = ({ openMenu, setOpenMenu }: MobileNavbarProps) => {
         <li
           onClick={async () => {
             setOpenMenu(false);
-            await router.push("/services");
+            await router.push("/services").finally();
           }}
           className="flex cursor-pointer items-center justify-start space-x-4"
         >
@@ -97,31 +97,31 @@ export default function Navbar() {
         <ul className="hidden space-x-10 md:flex">
           <li
             className="cursor-pointer"
-            onClick={async () => await router.push("/")}
+            onClick={async () => await router.push("/").finally()}
           >
             Home
           </li>
           <li
             className="cursor-pointer"
-            onClick={async () => await router.push("/about")}
+            onClick={async () => await router.push("/about").finally()}
           >
             About
           </li>
           <li
             className="cursor-pointer"
-            onClick={async () => await router.push("/shop")}
+            onClick={async () => await router.push("/shop").finally()}
           >
             Shop
           </li>
           <li
             className="cursor-pointer"
-            onClick={async () => await router.push("/events")}
+            onClick={async () => await router.push("/events").finally()}
           >
             Events
           </li>
           <li
             className="cursor-pointer"
-            onClick={async () => await router.push("/services")}
+            onClick={async () => await router.push("/services").finally()}
           >
             Services
           </li>
