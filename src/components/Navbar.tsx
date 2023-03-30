@@ -25,7 +25,9 @@ const MobileNavbar = ({ openMenu, setOpenMenu }: MobileNavbarProps) => {
         <li
           onClick={async () => {
             setOpenMenu(false);
-            await router.push("/").finally(() => {});
+            await router.push("/").finally(() => {
+              console.log("success");
+            });
           }}
           className="flex cursor-pointer items-center justify-start space-x-4"
         >
@@ -36,7 +38,9 @@ const MobileNavbar = ({ openMenu, setOpenMenu }: MobileNavbarProps) => {
         <li
           onClick={async () => {
             setOpenMenu(false);
-            await router.push("/about").finally(() => {});
+            await router.push("/about").finally(() => {
+              console.log("success");
+            });
           }}
           className="flex cursor-pointer items-center justify-start space-x-4"
         >
@@ -47,7 +51,9 @@ const MobileNavbar = ({ openMenu, setOpenMenu }: MobileNavbarProps) => {
         <li
           onClick={async () => {
             setOpenMenu(false);
-            await router.push("/shop").finally(() => {});
+            await router.push("/shop").finally(() => {
+              console.log("success");
+            });
           }}
           className="flex cursor-pointer items-center justify-start space-x-4"
         >
@@ -58,7 +64,9 @@ const MobileNavbar = ({ openMenu, setOpenMenu }: MobileNavbarProps) => {
         <li
           onClick={async () => {
             setOpenMenu(false);
-            await router.push("/events").finally(() => {});
+            await router.push("/events").finally(() => {
+              console.log("success");
+            });
           }}
           className="flex cursor-pointer items-center justify-start space-x-4"
         >
@@ -69,7 +77,9 @@ const MobileNavbar = ({ openMenu, setOpenMenu }: MobileNavbarProps) => {
         <li
           onClick={async () => {
             setOpenMenu(false);
-            await router.push("/services").finally(() => {});
+            await router.push("/services").finally(() => {
+              console.log("success");
+            });
           }}
           className="flex cursor-pointer items-center justify-start space-x-4"
         >
@@ -97,32 +107,50 @@ export default function Navbar() {
         <ul className="hidden space-x-10 md:flex">
           <li
             className="cursor-pointer"
-            onClick={async () => await router.push("/").finally(() => {})}
+            onClick={async () =>
+              await router.push("/").finally(() => {
+                console.log("success");
+              })
+            }
           >
             Home
           </li>
           <li
             className="cursor-pointer"
-            onClick={async () => await router.push("/about").finally(() => {})}
+            onClick={async () =>
+              await router.push("/about").finally(() => {
+                console.log("success");
+              })
+            }
           >
             About
           </li>
           <li
             className="cursor-pointer"
-            onClick={async () => await router.push("/shop").finally(() => {})}
+            onClick={async () =>
+              await router.push("/shop").finally(() => {
+                console.log("success");
+              })
+            }
           >
             Shop
           </li>
           <li
             className="cursor-pointer"
-            onClick={async () => await router.push("/events").finally(() => {})}
+            onClick={async () =>
+              await router.push("/events").finally(() => {
+                console.log("success");
+              })
+            }
           >
             Events
           </li>
           <li
             className="cursor-pointer"
             onClick={async () =>
-              await router.push("/services").finally(() => {})
+              await router.push("/services").finally(() => {
+                console.log("success");
+              })
             }
           >
             Services
