@@ -23,9 +23,9 @@ const MobileNavbar = ({ openMenu, setOpenMenu }: MobileNavbarProps) => {
     >
       <ul className="mx-auto my-auto flex h-3/4 flex-col items-center justify-between pt-4">
         <li
-          onClick={() => {
+          onClick={async () => {
             setOpenMenu(false);
-            router.push("/");
+            await router.push("/");
           }}
           className="flex cursor-pointer items-center justify-start space-x-4"
         >
@@ -34,9 +34,9 @@ const MobileNavbar = ({ openMenu, setOpenMenu }: MobileNavbarProps) => {
           </p>
         </li>
         <li
-          onClick={() => {
+          onClick={async () => {
             setOpenMenu(false);
-            router.push("/about");
+            await router.push("/about");
           }}
           className="flex cursor-pointer items-center justify-start space-x-4"
         >
@@ -45,9 +45,9 @@ const MobileNavbar = ({ openMenu, setOpenMenu }: MobileNavbarProps) => {
           </p>
         </li>
         <li
-          onClick={() => {
+          onClick={async () => {
             setOpenMenu(false);
-            router.push("/shop");
+            await router.push("/shop");
           }}
           className="flex cursor-pointer items-center justify-start space-x-4"
         >
@@ -56,9 +56,9 @@ const MobileNavbar = ({ openMenu, setOpenMenu }: MobileNavbarProps) => {
           </p>
         </li>
         <li
-          onClick={() => {
+          onClick={async () => {
             setOpenMenu(false);
-            router.push("/events");
+            await router.push("/events");
           }}
           className="flex cursor-pointer items-center justify-start space-x-4"
         >
@@ -67,9 +67,9 @@ const MobileNavbar = ({ openMenu, setOpenMenu }: MobileNavbarProps) => {
           </p>
         </li>
         <li
-          onClick={() => {
+          onClick={async () => {
             setOpenMenu(false);
-            router.push("/services");
+            await router.push("/services");
           }}
           className="flex cursor-pointer items-center justify-start space-x-4"
         >
@@ -95,21 +95,33 @@ export default function Navbar() {
           <h1>Full Spectrum Family</h1>
         </div>
         <ul className="hidden space-x-10 md:flex">
-          <li className="cursor-pointer" onClick={() => router.push("/")}>
+          <li
+            className="cursor-pointer"
+            onClick={async () => await router.push("/")}
+          >
             Home
           </li>
-          <li className="cursor-pointer" onClick={() => router.push("/about")}>
+          <li
+            className="cursor-pointer"
+            onClick={async () => await router.push("/about")}
+          >
             About
           </li>
-          <li className="cursor-pointer" onClick={() => router.push("/shop")}>
+          <li
+            className="cursor-pointer"
+            onClick={async () => await router.push("/shop")}
+          >
             Shop
           </li>
-          <li className="cursor-pointer" onClick={() => router.push("/events")}>
+          <li
+            className="cursor-pointer"
+            onClick={async () => await router.push("/events")}
+          >
             Events
           </li>
           <li
             className="cursor-pointer"
-            onClick={() => router.push("/services")}
+            onClick={async () => await router.push("/services")}
           >
             Services
           </li>
