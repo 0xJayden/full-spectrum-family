@@ -25,9 +25,7 @@ const MobileNavbar = ({ openMenu, setOpenMenu }: MobileNavbarProps) => {
         <li
           onClick={async () => {
             setOpenMenu(false);
-            await router.push("/").finally(() => {
-              console.log("success");
-            });
+            await router.push("/");
           }}
           className="flex cursor-pointer items-center justify-start space-x-4"
         >
@@ -38,9 +36,7 @@ const MobileNavbar = ({ openMenu, setOpenMenu }: MobileNavbarProps) => {
         <li
           onClick={async () => {
             setOpenMenu(false);
-            await router.push("/about").finally(() => {
-              console.log("success");
-            });
+            await router.push("/about");
           }}
           className="flex cursor-pointer items-center justify-start space-x-4"
         >
@@ -51,9 +47,7 @@ const MobileNavbar = ({ openMenu, setOpenMenu }: MobileNavbarProps) => {
         <li
           onClick={async () => {
             setOpenMenu(false);
-            await router.push("/shop").finally(() => {
-              console.log("success");
-            });
+            await router.push("/shop");
           }}
           className="flex cursor-pointer items-center justify-start space-x-4"
         >
@@ -64,9 +58,7 @@ const MobileNavbar = ({ openMenu, setOpenMenu }: MobileNavbarProps) => {
         <li
           onClick={async () => {
             setOpenMenu(false);
-            await router.push("/events").finally(() => {
-              console.log("success");
-            });
+            await router.push("/events");
           }}
           className="flex cursor-pointer items-center justify-start space-x-4"
         >
@@ -77,9 +69,7 @@ const MobileNavbar = ({ openMenu, setOpenMenu }: MobileNavbarProps) => {
         <li
           onClick={async () => {
             setOpenMenu(false);
-            await router.push("/services").finally(() => {
-              console.log("success");
-            });
+            await router.push("/services");
           }}
           className="flex cursor-pointer items-center justify-start space-x-4"
         >
