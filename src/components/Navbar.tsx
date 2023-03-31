@@ -90,11 +90,12 @@ export default function Navbar() {
   return (
     <>
       <div className="sticky top-0 flex items-center justify-between p-5">
+        <div className="absolute bottom-0 left-0 right-0 top-0 -z-10 bg-white opacity-75"></div>
         <div className="flex items-center space-x-[3px]">
           <Image src={logo} className="max-w-[40px]" alt="logo" />
           <h1>Full Spectrum Family</h1>
         </div>
-        <ul className="hidden space-x-10 md:flex">
+        <ul className="hidden md:flex md:w-1/2 md:justify-between">
           <li
             className="cursor-pointer"
             onClick={async () =>
