@@ -66,42 +66,6 @@ export default function Shop() {
           </ul>
           <div className="space-y-5 md:grid md:grid-cols-2 md:gap-20 md:space-y-0 lg:grid-cols-4">
             {renderItems()}
-            {/* <div className="space-y-2 text-center">
-              <div className="rounded-lg bg-white shadow">
-                <Image src={mock1} alt="" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold">{`Founder's Collection Long Sleeve Midi Dress`}</h1>
-                <p>from $99.99</p>
-              </div>
-            </div>
-            <div className="space-y-2 text-center">
-              <div className="rounded-lg bg-white shadow">
-                <Image src={mock2} alt="" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold">{`Founder's Collection Men's Windbreaker`}</h1>
-                <p>from $99.99</p>
-              </div>
-            </div>
-            <div className="space-y-2 text-center">
-              <div className="rounded-lg bg-white shadow">
-                <Image src={mock1} alt="" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold">{`Founder's Collection Long Sleeve Midi Dress`}</h1>
-                <p>from $99.99</p>
-              </div>
-            </div>
-            <div className="space-y-2 text-center">
-              <div className="rounded-lg bg-white shadow">
-                <Image src={mock2} alt="" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold">{`Founder's Collection Men's Windbreaker`}</h1>
-                <p>from $99.99</p>
-              </div>
-            </div> */}
           </div>
         </div>
       </div>
