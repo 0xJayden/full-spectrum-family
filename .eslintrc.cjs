@@ -33,11 +33,23 @@ const config = {
       2,
       { checksVoidReturn: { attributes: false } },
     ],
-    "@typescript-eslint/no-unsafe-return": ["warn"],
-    "@typescript-eslint/no-unsafe-member-access": ["warn"],
-    "@typescript-eslint/no-unsafe-call": ["warn"],
-    "@typescript-eslint/no-unsafe-assignment": ["warn"],
-    "@typescript-eslint/restrict-template-expressions": ["warn"],
+    "@typescript-eslint/no-unsafe-return": [
+      "warn",
+      { argsIgnorePattern: "^_" },
+    ],
+    "@typescript-eslint/no-unsafe-member-access": [
+      "warn",
+      { argsIgnorePattern: "^_" },
+    ],
+    "@typescript-eslint/no-unsafe-call": ["warn", { argsIgnorePattern: "^_" }],
+    "@typescript-eslint/no-unsafe-assignment": [
+      "warn",
+      { argsIgnorePattern: "^_" },
+    ],
+    "@typescript-eslint/restrict-template-expressions": [
+      "warn",
+      { argsIgnorePattern: "^_" },
+    ],
   },
 };
 
