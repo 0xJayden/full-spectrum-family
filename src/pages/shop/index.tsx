@@ -23,7 +23,7 @@ export default function Shop() {
       <div key={item.id} className="space-y-2 text-center">
         <div
           onClick={() => router.push(`/shop/item/${item.id}`)}
-          className="rounded-lg bg-white shadow"
+          className="overflow-hidden rounded-lg bg-white shadow"
         >
           <Image
             width={200}
