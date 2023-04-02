@@ -7,21 +7,21 @@ import {
 } from "~/server/api/trpc";
 
 export const exampleRouter = createTRPCRouter({
-  hello: publicProcedure
-    .input(z.object({ text: z.string() }))
-    .query(({ input }) => {
-      return {
-        greeting: `Hello ${input.text}`,
-      };
-    }),
+  // hello: publicProcedure
+  //   .input(z.object({ text: z.string() }))
+  //   .query(({ input }) => {
+  //     return {
+  //       greeting: `Hello ${input.text}`,
+  //     };
+  //   }),
 
-  getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.example.findMany();
-  }),
+  // getAll: publicProcedure.query(({ ctx }) => {
+  //   return ctx.prisma.example.findMany();
+  // }),
 
-  getSecretMessage: protectedProcedure.query(() => {
-    return "you can now see this secret message!";
-  }),
+  // getSecretMessage: protectedProcedure.query(() => {
+  //   return "you can now see this secret message!";
+  // }),
 
   getItems: publicProcedure.query(async () => {
     const result = await fetch("https://api.printful.com/store/products", {
@@ -42,7 +42,7 @@ export const exampleRouter = createTRPCRouter({
 
   getItem: publicProcedure
     .input(z.object({ id: z.string() }))
-    .query(async ({ ctx, input }) => {
+    .query(async ({ input }) => {
       const result = await fetch(
         `https://api.printful.com/store/products/${input.id}`,
         {
