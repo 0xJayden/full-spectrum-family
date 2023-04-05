@@ -1,11 +1,14 @@
+import { useAtom } from "jotai";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import Navbar from "~/components/Navbar";
 import { api } from "~/utils/api";
+import { cartAtom } from "..";
 
 export default function Item() {
   const [index, setIndex] = useState(0);
+  const [cart, setCart] = useAtom(cartAtom);
 
   const router = useRouter();
   const { id } = router.query;
@@ -21,6 +24,7 @@ export default function Item() {
     <>
       <Navbar />
       <div className="min-h-screen md:flex md:w-full md:justify-center">
+        <button className="pl-5" onClick={() => router.back()}>{`<`}</button>
         <div className="flex flex-col items-center space-y-3 p-5 md:w-full md:max-w-[1250px] md:flex-row md:items-start md:justify-between md:space-y-0">
           <div className="flex flex-col items-center space-y-2">
             <div className="overflow-hidden rounded-lg shadow-lg">
@@ -28,27 +32,49 @@ export default function Item() {
                 width={200}
                 height={200}
                 className="h-full w-full"
-                src={query.data.result.sync_product.thumbnail_url}
+                src={
+                  index >= 0
+                    ? query.data.result.sync_variants[index].product.image
+                    : query.data.result.sync_product.thumbnail_url
+                }
                 alt=""
               />
             </div>
-            <div className="flex space-x-2">
+            <div className="flex w-[380px] space-x-2 overflow-x-scroll p-2">
               {query.data.result.sync_variants.map((i: any) => (
-                <div className="overflow-hidden rounded-lg shadow" key={i.id}>
+                <button
+                  onClick={() => {
+                    console.log(query.data.result.sync_variants.indexOf(i));
+                    setIndex(query.data.result.sync_variants.indexOf(i));
+                  }}
+                  className={` min-w-[50px] overflow-hidden rounded-lg shadow ${
+                    index === query.data.result.sync_variants.indexOf(i) &&
+                    "border-[2px] border-yellow-300"
+                  }`}
+                  key={i.id}
+                >
                   <Image width={50} height={50} alt="" src={i.product.image} />
-                </div>
+                </button>
               ))}
             </div>
           </div>
           <div className="md:flex md:min-h-[250px] md:w-full md:items-center md:justify-center ">
             <div>
               <h1 className="text-2xl font-bold">
-                {query.data.result.sync_product.name}
+                {query.data.result.sync_variants[index].name}
               </h1>
               <p className="pb-5 text-xl font-bold">
                 ${query.data.result.sync_variants[index].retail_price}
               </p>
-              <button className="w-full rounded-full bg-yellow-300 p-2 font-bold">
+              <button
+                onClick={() =>
+                  setCart((prev) => [
+                    ...prev,
+                    query.data.result.sync_variants[index],
+                  ])
+                }
+                className="w-full rounded-full bg-yellow-300 p-2 font-bold"
+              >
                 Add to Cart
               </button>
             </div>

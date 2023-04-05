@@ -1,15 +1,92 @@
-import { useState } from "react";
-import { Bars3Icon, ShoppingCartIcon } from "@heroicons/react/24/outline";
+import { useEffect, useState } from "react";
+import {
+  Bars3Icon,
+  ShoppingCartIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
 import { useRouter } from "next/router";
 import { Dispatch, SetStateAction } from "react";
 import Image from "next/image";
 
 import logo from "~/assets/images/logo.png";
+import { useAtom } from "jotai";
+import { cartAtom } from "~/pages/shop";
+import { api } from "~/utils/api";
+
+const Cart = () => {
+  const [cart, setCart] = useAtom(cartAtom);
+  const [subtotal, setSubtotal] = useState(0);
+
+  useEffect(() => {
+    setSubtotal((prev) => {
+      let total = 0;
+      cart.forEach((item: any) => {
+        total += +item.retail_price;
+      });
+      return total;
+    });
+  }, [cart]);
+
+  // cart.forEach((item: any) => { const query = api.example.getItem.useQuery({id: item})});
+
+  const renderCart = () => {
+    return cart.map((item: any) => (
+      <div key={item.id} className="flex w-full justify-between p-2">
+        <div className="flex space-x-2">
+          <div className="h-[100px] w-[100px] overflow-hidden rounded-lg bg-white shadow">
+            <Image
+              className="h-full w-full object-contain"
+              height={100}
+              width={100}
+              src={item.product.image}
+              alt=""
+            />
+          </div>
+          <div className="max-w-[250px] p-1">
+            <h1 className=" font-bold">{item.product.name}</h1>
+            <p>${item.retail_price}</p>
+          </div>
+        </div>
+        <button
+          onClick={() =>
+            setCart((prev) => {
+              return prev.filter((i: any) => item.id !== i.id);
+            })
+          }
+        >
+          <TrashIcon className="h-4" />
+        </button>
+      </div>
+    ));
+  };
+
+  return (
+    <div className="fixed z-50 flex h-full  w-screen flex-col justify-between bg-gradient-to-b from-[#ffffff] to-[#fcedff] pb-20">
+      <div className="my-2 space-y-2 overflow-y-scroll">{renderCart()}</div>
+      <div className=" flex h-[250px] w-full flex-col justify-between border-t border-t-[#cccccc] p-5">
+        <div className="flex justify-between">
+          <h1 className="font-bold text-[#717171]">Subtotal:</h1>
+          <p className="font-bold">${subtotal.toFixed(2)}</p>
+        </div>
+        <div className="space-y-2 border-t border-dashed border-t-[#aaaaaa] pt-3">
+          <div className="flex justify-between">
+            <h1 className="font-bold text-[#717171]">Total:</h1>
+            <p className="font-bold">${subtotal.toFixed(2)}</p>
+          </div>
+          <button className="w-full rounded-lg bg-yellow-300 p-2 font-bold shadow">
+            Continue
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 type MobileNavbarProps = {
   openMenu: boolean;
   setOpenMenu: Dispatch<SetStateAction<boolean>>;
 };
+
 const MobileNavbar = ({ openMenu, setOpenMenu }: MobileNavbarProps) => {
   const router = useRouter();
 
@@ -84,6 +161,7 @@ const MobileNavbar = ({ openMenu, setOpenMenu }: MobileNavbarProps) => {
 
 export default function Navbar() {
   const [openMenu, setOpenMenu] = useState(false);
+  const [openCart, setOpenCart] = useState(false);
 
   const router = useRouter();
 
@@ -148,7 +226,9 @@ export default function Navbar() {
           </li>
         </ul>
         <div className="flex space-x-2">
-          <ShoppingCartIcon className="h-6 w-6" />
+          <button onClick={() => setOpenCart(!openCart)}>
+            <ShoppingCartIcon className="h-6 w-6" />
+          </button>
           <Bars3Icon
             onClick={() => setOpenMenu(!openMenu)}
             className="h-6 w-6 md:hidden"
@@ -156,6 +236,7 @@ export default function Navbar() {
         </div>
       </div>
       <MobileNavbar openMenu={openMenu} setOpenMenu={setOpenMenu} />
+      {openCart && <Cart />}
     </>
   );
 }

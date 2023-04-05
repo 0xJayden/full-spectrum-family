@@ -1,13 +1,16 @@
 import Image from "next/image";
 
 import Navbar from "~/components/Navbar";
-import mock1 from "~/assets/images/mock1.png";
-import mock2 from "~/assets/images/mock2.png";
 import { api } from "~/utils/api";
 import { useState } from "react";
 import { useRouter } from "next/router";
+import { atomWithStorage } from "jotai/utils";
+import { useAtom } from "jotai";
+
+export const cartAtom = atomWithStorage<Array<{}>>("cart", []);
 
 export default function Shop() {
+  const [cart, setCart] = useAtom(cartAtom);
   const [all, setAll] = useState(true);
 
   const router = useRouter();
@@ -36,7 +39,6 @@ export default function Shop() {
         <div>
           <h1 className="text-2xl font-bold">{item.name}</h1>
         </div>
-        <button onClick={() => {}}>Add to Cart</button>
       </div>
     ));
   };
