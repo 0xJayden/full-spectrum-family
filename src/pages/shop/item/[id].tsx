@@ -1,3 +1,4 @@
+import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 import { useAtom } from "jotai";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -24,7 +25,9 @@ export default function Item() {
     <>
       <Navbar />
       <div className="min-h-screen md:flex md:w-full md:justify-center">
-        <button className="pl-5" onClick={() => router.back()}>{`<`}</button>
+        <button className="pl-5" onClick={() => router.back()}>
+          <ChevronLeftIcon className="h-6" />
+        </button>
         <div className="flex flex-col items-center space-y-3 p-5 md:w-full md:max-w-[1250px] md:flex-row md:items-start md:justify-between md:space-y-0">
           <div className="flex flex-col items-center space-y-2">
             <div className="overflow-hidden rounded-lg shadow-lg">

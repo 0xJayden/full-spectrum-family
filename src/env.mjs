@@ -29,6 +29,7 @@ const server = z.object({
  * built with invalid env vars. To expose them to the client, prefix them with `NEXT_PUBLIC_`.
  */
 const client = z.object({
+  NEXT_PUBLIC_PAYPAL_CLIENT_ID: z.string().min(1),
   // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
   // NEXT_PUBLIC_API_KEY: z.string().min(1),
 });
@@ -45,6 +46,7 @@ const processEnv = {
   API_KEY: process.env.API_KEY,
   // NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
   NEXTAUTH_URL: process.env.NEXTAUTH_URL,
+  NEXT_PUBLIC_PAYPAL_CLIENT_ID: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID,
   // DISCORD_CLIENT_ID: process.env.DISCORD_CLIENT_ID,
   // DISCORD_CLIENT_SECRET: process.env.DISCORD_CLIENT_SECRET,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,

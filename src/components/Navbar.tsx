@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   Bars3Icon,
+  ChevronLeftIcon,
   ShoppingCartIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
@@ -11,11 +12,298 @@ import Image from "next/image";
 import logo from "~/assets/images/logo.png";
 import { useAtom } from "jotai";
 import { cartAtom } from "~/pages/shop";
+import { atomWithStorage } from "jotai/utils";
 import { api } from "~/utils/api";
+import { PayPalButtons } from "@paypal/react-paypal-js";
 
-const Cart = () => {
+type CartProps = {
+  setCheckout: Dispatch<SetStateAction<boolean>>;
+  setOpenCart: Dispatch<SetStateAction<boolean>>;
+};
+
+type CheckoutProps = {
+  setCheckout: Dispatch<SetStateAction<boolean>>;
+  setConfirmation: Dispatch<SetStateAction<boolean>>;
+};
+
+type ConfirmationProps = {
+  setConfirmation: Dispatch<SetStateAction<boolean>>;
+};
+
+const firstNameAtom = atomWithStorage("firstName", "");
+const lastNameAtom = atomWithStorage("lastName", "");
+const addressAtom = atomWithStorage("address", "");
+const cityAtom = atomWithStorage("city", "");
+const stateAtom = atomWithStorage("state", "");
+const countryAtom = atomWithStorage("country", "");
+const zipAtom = atomWithStorage("zip", "");
+const phoneAtom = atomWithStorage("phone", "");
+const emailAtom = atomWithStorage("email", "");
+
+const subtotalAtom = atomWithStorage("subtotal", 0);
+const taxAtom = atomWithStorage("tax", 0);
+const shippingAtom = atomWithStorage("shipping", [
+  {
+    id: "",
+    name: "",
+    rate: "",
+    currency: "",
+    minDeliveryDays: 0,
+    maxDeliveryDays: 0,
+    minDeliveryDate: "",
+    maxDeliveryDate: "",
+  },
+]);
+const totalAtom = atomWithStorage("total", "");
+
+const Confirmation = ({ setConfirmation }: ConfirmationProps) => {
+  const [subtotal, setSubtotal] = useAtom(subtotalAtom);
+  const [tax, setTax] = useAtom(taxAtom);
+  const [shipping, setShipping] = useAtom(shippingAtom);
+  const [total, setTotal] = useAtom(totalAtom);
+
+  return (
+    <div className="fixed z-[60] h-full w-screen overflow-y-scroll bg-gradient-to-b from-[#ffffff] to-[#fcedff] p-5 pt-0">
+      <button
+        className="self-start pb-4"
+        onClick={() => setConfirmation(false)}
+      >
+        <ChevronLeftIcon className="h-6" />
+      </button>
+      <div className="flex flex-col justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">Checkout</h1>
+        </div>
+        <div className="space-y-4 overflow-y-scroll border-t border-dashed border-t-[#aaaaaa] pb-12 pt-4">
+          <div className="flex justify-between">
+            <p className="font-bold">Subtotal:</p>
+            <p className="font-bold">${subtotal.toFixed(2)}</p>
+          </div>
+          <div className="flex justify-between">
+            <p className="font-bold">Tax:</p>
+            <p className="font-bold">${tax.toFixed(2)}</p>
+          </div>
+          <div className="flex justify-between">
+            <p className="font-bold">Shipping:</p>
+            <p className="font-bold">
+              ${shipping[0] && (+shipping[0].rate).toFixed(2)}
+            </p>
+          </div>
+          <div className="flex justify-between">
+            <p className="text-lg font-bold">Total:</p>
+            <p className="text-lg font-bold">${total}</p>
+          </div>
+          <PayPalButtons
+            createOrder={(data, actions) => {
+              return actions.order
+                .create({
+                  purchase_units: [
+                    {
+                      amount: {
+                        value: total,
+                      },
+                    },
+                  ],
+                })
+                .then((orderId) => {
+                  // Your code here after create the order
+                  console.log(orderId, "orderId");
+                  return orderId;
+                });
+            }}
+            onApprove={async (data, actions) => {
+              return await actions.order?.capture().then(function () {
+                // Your code here after capture the order
+                console.log(data, "data");
+              });
+            }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const Checkout = ({ setCheckout, setConfirmation }: CheckoutProps) => {
+  const [firstName, setFirstName] = useAtom(firstNameAtom);
+  const [lastName, setLastName] = useAtom(lastNameAtom);
+  const [address, setAddress] = useAtom(addressAtom);
+  const [city, setCity] = useAtom(cityAtom);
+  const [state, setState] = useAtom(stateAtom);
+  const [country, setCountry] = useAtom(countryAtom);
+  const [zip, setZip] = useAtom(zipAtom);
+  const [phone, setPhone] = useAtom(phoneAtom);
+  const [email, setEmail] = useAtom(emailAtom);
+
+  const [subtotal, setSubtotal] = useAtom(subtotalAtom);
+  const [tax, setTax] = useAtom(taxAtom);
+  const [shipping, setShipping] = useAtom(shippingAtom);
+  const [total, setTotal] = useAtom(totalAtom);
+
   const [cart, setCart] = useAtom(cartAtom);
-  const [subtotal, setSubtotal] = useState(0);
+  const [items, setItems] = useState<
+    Array<{
+      variant_id: string;
+      quantity: number;
+      value: string;
+    }>
+  >([]);
+
+  const countries = api.example.getCountries.useQuery(undefined, {
+    onSuccess: (data) => {
+      setCountry(data.result[0].code);
+    },
+  });
+
+  const taxMutation = api.example.getTax.useMutation();
+
+  const shippingMutation = api.example.getShipping.useMutation();
+
+  const calculateTaxAndShipping = () => {
+    taxMutation.mutate(
+      {
+        country: country,
+        state: state,
+        city: city,
+        zip: zip,
+      },
+      {
+        onSuccess: (data) => {
+          setTax(data.result.rate * subtotal);
+        },
+      }
+    );
+
+    shippingMutation.mutate(
+      {
+        address: address,
+        city: city,
+        country: country,
+        state: state,
+        zip: +zip,
+        phone: phone,
+        items: items,
+      },
+      {
+        onSuccess: (data) => {
+          setShipping(data.result);
+          console.log(data.result);
+          setTotal(
+            (subtotal + tax + +data.result[0].rate).toFixed(2).toString()
+          );
+          setConfirmation(true);
+        },
+        onError: (error) => {
+          console.log(error);
+        },
+      }
+    );
+  };
+
+  useEffect(() => {
+    let items: Array<{
+      variant_id: string;
+      // external_variant_id: string;
+      quantity: number;
+      value: string;
+    }> = [];
+
+    cart.forEach((i: any) => {
+      let item = {
+        variant_id: i.variant_id.toString(),
+        // external_variant_id: i.external_variant_id,
+        quantity: 1,
+        value: i.retail_price,
+      };
+
+      items.push(item);
+    });
+
+    setItems(items);
+    console.log(items);
+  }, []);
+
+  return (
+    <div className="fixed z-[60] h-full w-screen bg-gradient-to-b from-[#ffffff] to-[#fcedff] p-5 pt-0">
+      <button className="self-start pb-4" onClick={() => setCheckout(false)}>
+        <ChevronLeftIcon className="h-6" />
+      </button>
+      <div className="flex w-full flex-col space-y-2">
+        <h1 className="font-bold">Shipping Info</h1>
+        <input
+          required
+          className="rounded p-2 shadow"
+          placeholder="First name"
+          onChange={(e) => setFirstName(e.target.value)}
+        />
+        <input
+          required
+          className="rounded p-2 shadow"
+          placeholder="Last name"
+          onChange={(e) => setLastName(e.target.value)}
+        />
+        <input
+          required
+          className="rounded p-2 shadow"
+          placeholder="Address"
+          onChange={(e) => setAddress(e.target.value)}
+        />
+        <input
+          required
+          className="rounded p-2 shadow"
+          placeholder="City"
+          onChange={(e) => setCity(e.target.value)}
+        />
+        <select
+          className="rounded p-2 shadow"
+          onChange={(e: any) => {
+            setState(e.target.value);
+          }}
+        >
+          <option>Select</option>
+          {countries.data?.result[0].states.map((country: any) => (
+            <option key={country.code} value={country.code}>
+              {country.name}
+            </option>
+          ))}
+        </select>
+        <input
+          required
+          className="rounded p-2 shadow"
+          placeholder="Zip"
+          type={"number"}
+          onChange={(e) => setZip(e.target.value)}
+        />
+        <input
+          required
+          className="rounded p-2 shadow"
+          placeholder="Phone"
+          type={"tel"}
+          onChange={(e) => setPhone(e.target.value)}
+        />
+        <input
+          required
+          className="rounded p-2 shadow"
+          placeholder="Email"
+          type={"email"}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <button
+          onClick={() => calculateTaxAndShipping()}
+          className="rounded-lg bg-yellow-300 p-2 font-bold"
+        >
+          Continue
+        </button>
+      </div>
+    </div>
+  );
+};
+
+const Cart = ({ setCheckout, setOpenCart }: CartProps) => {
+  const [cart, setCart] = useAtom(cartAtom);
+  const [subtotal, setSubtotal] = useAtom(subtotalAtom);
+
+  console.log(cart);
 
   useEffect(() => {
     setSubtotal((prev) => {
@@ -26,8 +314,6 @@ const Cart = () => {
       return total;
     });
   }, [cart]);
-
-  // cart.forEach((item: any) => { const query = api.example.getItem.useQuery({id: item})});
 
   const renderCart = () => {
     return cart.map((item: any) => (
@@ -61,19 +347,23 @@ const Cart = () => {
   };
 
   return (
-    <div className="fixed z-50 flex h-full  w-screen flex-col justify-between bg-gradient-to-b from-[#ffffff] to-[#fcedff] pb-20">
-      <div className="my-2 space-y-2 overflow-y-scroll">{renderCart()}</div>
-      <div className=" flex h-[250px] w-full flex-col justify-between border-t border-t-[#cccccc] p-5">
-        <div className="flex justify-between">
-          <h1 className="font-bold text-[#717171]">Subtotal:</h1>
-          <p className="font-bold">${subtotal.toFixed(2)}</p>
-        </div>
+    <div className="fixed z-50 flex h-full w-screen flex-col justify-between overflow-y-scroll bg-gradient-to-b from-[#ffffff] to-[#fcedff] pb-20">
+      <button className="self-start pl-5" onClick={() => setOpenCart(false)}>
+        <ChevronLeftIcon className="h-6" />
+      </button>
+      <div className=" min-h-[250px] space-y-2 overflow-y-scroll">
+        {renderCart()}
+      </div>
+      <div className="w-full p-5">
         <div className="space-y-2 border-t border-dashed border-t-[#aaaaaa] pt-3">
           <div className="flex justify-between">
-            <h1 className="font-bold text-[#717171]">Total:</h1>
+            <h1 className="font-bold text-[#717171]">SubTotal:</h1>
             <p className="font-bold">${subtotal.toFixed(2)}</p>
           </div>
-          <button className="w-full rounded-lg bg-yellow-300 p-2 font-bold shadow">
+          <button
+            onClick={() => setCheckout(true)}
+            className="w-full rounded-lg bg-yellow-300 p-2 font-bold shadow"
+          >
             Continue
           </button>
         </div>
@@ -162,6 +452,8 @@ const MobileNavbar = ({ openMenu, setOpenMenu }: MobileNavbarProps) => {
 export default function Navbar() {
   const [openMenu, setOpenMenu] = useState(false);
   const [openCart, setOpenCart] = useState(false);
+  const [checkout, setCheckout] = useState(false);
+  const [confirmation, setConfirmation] = useState(false);
 
   const router = useRouter();
 
@@ -236,7 +528,11 @@ export default function Navbar() {
         </div>
       </div>
       <MobileNavbar openMenu={openMenu} setOpenMenu={setOpenMenu} />
-      {openCart && <Cart />}
+      {openCart && <Cart setOpenCart={setOpenCart} setCheckout={setCheckout} />}
+      {checkout && (
+        <Checkout setCheckout={setCheckout} setConfirmation={setConfirmation} />
+      )}
+      {confirmation && <Confirmation setConfirmation={setConfirmation} />}
     </>
   );
 }
