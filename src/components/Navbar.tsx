@@ -493,6 +493,7 @@ export default function Navbar() {
   const [openCart, setOpenCart] = useState(false);
   const [checkout, setCheckout] = useState(false);
   const [confirmation, setConfirmation] = useState(false);
+  const [cart, setCart] = useAtom(cartAtom);
 
   const router = useRouter();
 
@@ -557,7 +558,10 @@ export default function Navbar() {
           </li>
         </ul>
         <div className="flex space-x-2">
-          <button onClick={() => setOpenCart(!openCart)}>
+          <button className="relative" onClick={() => setOpenCart(!openCart)}>
+            <div className="absolute -right-2 -top-2 h-5 w-5 rounded-full bg-yellow-300 ">
+              <p className="text-sm">{cart.length}</p>
+            </div>
             <ShoppingCartIcon className="h-6 w-6" />
           </button>
           <Bars3Icon

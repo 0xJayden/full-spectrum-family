@@ -12,17 +12,49 @@ export const cartAtom = atomWithStorage<Array<{}>>("cart", []);
 export default function Shop() {
   const [cart, setCart] = useAtom(cartAtom);
   const [all, setAll] = useState(true);
+  const [items, setItems] = useState([]);
 
   const router = useRouter();
 
-  const query = api.example.getItems.useQuery();
+  const query = api.example.getItems.useQuery(undefined, {
+    onSuccess: (data) => {
+      let items: any = [];
+
+      data.result.forEach((item: any) => {
+        if (item.name.includes("Founder")) {
+          items.push(item);
+        }
+      });
+
+      data.result.forEach((item: any) => {
+        if (item.name.includes("UNMSKD")) {
+          items.push(item);
+        }
+      });
+
+      data.result.forEach((item: any) => {
+        if (item.name.includes("FSF")) {
+          items.push(item);
+        }
+      });
+
+      data.result.forEach((item: any) => {
+        if (!items.includes(item)) {
+          items.push(item);
+        }
+      });
+
+      console.log(items, "items");
+      setItems(items);
+    },
+  });
 
   if (query.isLoading) return <div>Loading...</div>;
   if (query.isError) return <div>Error: {query.error.message}</div>;
   if (query.data) console.log(query.data);
 
   const renderItems = () => {
-    return query.data?.result.map((item: any) => (
+    return items.map((item: any) => (
       <div key={item.id} className="space-y-2 text-center">
         <div
           onClick={() => router.push(`/shop/item/${item.id}`)}
