@@ -10,16 +10,25 @@ import { cartAtom } from "..";
 export default function Item() {
   const [index, setIndex] = useState(0);
   const [cart, setCart] = useAtom(cartAtom);
+  const [image, setImage] = useState("");
 
   const router = useRouter();
   const { id } = router.query;
 
   if (!id) return <div>loading...</div>;
-  const query = api.example.getItem.useQuery({ id: id as string });
+  const query = api.example.getItem.useQuery(
+    { id: id as string },
+    {
+      onSuccess: (data) => {
+        data.result.sync_variants[index].files.map((file: any) => {
+          if (file.type === "preview") setImage(file.preview_url);
+        });
+      },
+    }
+  );
 
   if (query.isLoading) return <div>Loading...</div>;
   if (query.isError) return <div>Error: {query.error.message}</div>;
-  if (query.data) console.log(query.data);
 
   return (
     <>
@@ -35,13 +44,7 @@ export default function Item() {
                 width={200}
                 height={200}
                 className="h-full w-full"
-                src={
-                  index >= 0 && query.data.result.sync_variants[index].files[1]
-                    ? query.data.result.sync_variants[index].files[1]
-                        .preview_url
-                    : query.data.result.sync_variants[index].files[0]
-                        .preview_url
-                }
+                src={image}
                 alt=""
               />
             </div>
@@ -49,8 +52,8 @@ export default function Item() {
               {query.data.result.sync_variants.map((i: any) => (
                 <button
                   onClick={() => {
-                    console.log(query.data.result.sync_variants.indexOf(i));
                     setIndex(query.data.result.sync_variants.indexOf(i));
+                    query.refetch();
                   }}
                   className={` min-w-[50px] overflow-hidden rounded-lg shadow ${
                     index === query.data.result.sync_variants.indexOf(i) &&
