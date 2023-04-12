@@ -56,11 +56,33 @@ const shippingAtom = atomWithStorage("shipping", [
 ]);
 const totalAtom = atomWithStorage("total", "");
 
+const itemsAtom = atomWithStorage("items", [
+  {
+    sync_variant_id: 0,
+    variant_id: "",
+    quantity: 0,
+    value: "",
+  },
+]);
+
 const Confirmation = ({ setConfirmation }: ConfirmationProps) => {
   const [subtotal, setSubtotal] = useAtom(subtotalAtom);
   const [tax, setTax] = useAtom(taxAtom);
   const [shipping, setShipping] = useAtom(shippingAtom);
   const [total, setTotal] = useAtom(totalAtom);
+  const [items, setItems] = useAtom(itemsAtom);
+
+  const [firstName, setFirstName] = useAtom(firstNameAtom);
+  const [lastName, setLastName] = useAtom(lastNameAtom);
+  const [address, setAddress] = useAtom(addressAtom);
+  const [city, setCity] = useAtom(cityAtom);
+  const [state, setState] = useAtom(stateAtom);
+  const [country, setCountry] = useAtom(countryAtom);
+  const [zip, setZip] = useAtom(zipAtom);
+  const [phone, setPhone] = useAtom(phoneAtom);
+  const [email, setEmail] = useAtom(emailAtom);
+
+  const createOrderMutation = api.example.createOrder.useMutation();
 
   return (
     <div className="fixed z-[60] h-full w-screen overflow-y-scroll bg-gradient-to-b from-[#ffffff] to-[#fcedff] p-5 pt-0">
@@ -112,9 +134,30 @@ const Confirmation = ({ setConfirmation }: ConfirmationProps) => {
                 });
             }}
             onApprove={async (data, actions) => {
-              return await actions.order?.capture().then(function () {
+              return await actions.order?.capture().then((data2) => {
                 // Your code here after capture the order
-                console.log(data, "data");
+                console.log(data2, "data2");
+
+                createOrderMutation
+                  .mutateAsync({
+                    recipient: {
+                      name: firstName + " " + lastName,
+                      address1: address,
+                      city: city,
+                      state_code: state,
+                      country_code: country,
+                      zip: +zip,
+                      phone: phone,
+                      email: email,
+                    },
+                    items: items,
+                  })
+                  .then((res) => {
+                    console.log(res, "res");
+                  })
+                  .catch((err) => {
+                    console.log(err, "err");
+                  });
               });
             }}
           />
@@ -141,13 +184,7 @@ const Checkout = ({ setCheckout, setConfirmation }: CheckoutProps) => {
   const [total, setTotal] = useAtom(totalAtom);
 
   const [cart, setCart] = useAtom(cartAtom);
-  const [items, setItems] = useState<
-    Array<{
-      variant_id: string;
-      quantity: number;
-      value: string;
-    }>
-  >([]);
+  const [items, setItems] = useAtom(itemsAtom);
 
   const countries = api.example.getCountries.useQuery(undefined, {
     onSuccess: (data) => {
@@ -202,16 +239,16 @@ const Checkout = ({ setCheckout, setConfirmation }: CheckoutProps) => {
 
   useEffect(() => {
     let items: Array<{
+      sync_variant_id: number;
       variant_id: string;
-      // external_variant_id: string;
       quantity: number;
       value: string;
     }> = [];
 
     cart.forEach((i: any) => {
       let item = {
+        sync_variant_id: i.id,
         variant_id: i.variant_id.toString(),
-        // external_variant_id: i.external_variant_id,
         quantity: 1,
         value: i.retail_price,
       };
@@ -219,8 +256,10 @@ const Checkout = ({ setCheckout, setConfirmation }: CheckoutProps) => {
       items.push(item);
     });
 
+    console.log(cart, "cart");
+
     setItems(items);
-    console.log(items);
+    console.log(items, "items");
   }, []);
 
   return (

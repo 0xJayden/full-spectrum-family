@@ -112,8 +112,8 @@ export const exampleRouter = createTRPCRouter({
         phone: z.string(),
         items: z.array(
           z.object({
+            sync_variant_id: z.number(),
             variant_id: z.string(),
-            // external_variant_id: z.string(),
             quantity: z.number(),
             value: z.string(),
           })
@@ -136,6 +136,50 @@ export const exampleRouter = createTRPCRouter({
             zip: input.zip,
             phone: input.phone,
           },
+          items: input.items,
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          return data;
+        })
+        .catch((err) => {
+          return err;
+        });
+      return result;
+    }),
+
+  createOrder: publicProcedure
+    .input(
+      z.object({
+        recipient: z.object({
+          name: z.string(),
+          address1: z.string(),
+          city: z.string(),
+          state_code: z.string(),
+          country_code: z.string(),
+          zip: z.number(),
+          phone: z.string(),
+          email: z.string(),
+        }),
+        items: z.array(
+          z.object({
+            sync_variant_id: z.number(),
+            quantity: z.number(),
+            value: z.string(),
+          })
+        ),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const result = await fetch(`https://api.printful.com/orders`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          recipient: input.recipient,
           items: input.items,
         }),
       })

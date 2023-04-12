@@ -36,9 +36,11 @@ export default function Item() {
                 height={200}
                 className="h-full w-full"
                 src={
-                  index >= 0
-                    ? query.data.result.sync_variants[index].product.image
-                    : query.data.result.sync_product.thumbnail_url
+                  index >= 0 && query.data.result.sync_variants[index].files[1]
+                    ? query.data.result.sync_variants[index].files[1]
+                        .preview_url
+                    : query.data.result.sync_variants[index].files[0]
+                        .preview_url
                 }
                 alt=""
               />
