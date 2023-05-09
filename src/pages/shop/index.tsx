@@ -13,12 +13,18 @@ export default function Shop() {
   const [cart, setCart] = useAtom(cartAtom);
   const [all, setAll] = useState(true);
   const [items, setItems] = useState([]);
+  const [error, setError] = useState("");
 
   const router = useRouter();
 
   const query = api.example.getItems.useQuery(undefined, {
     onSuccess: (data) => {
       let items: any = [];
+
+      if (data.code === 401) {
+        setError(data.result);
+        return;
+      }
 
       data.result.forEach((item: any) => {
         if (item.name.includes("Founder")) {
@@ -53,12 +59,15 @@ export default function Shop() {
   if (query.isError) return <div>Error: {query.error.message}</div>;
   if (query.data) console.log(query.data);
 
+  if (error !== "")
+    return <div>{error + " Please contact an admin, owner, or dev."}</div>;
+
   const renderItems = () => {
     return items.map((item: any) => (
       <div key={item.id} className="space-y-2 text-center">
         <div
           onClick={() => router.push(`/shop/item/${item.id}`)}
-          className="overflow-hidden rounded-lg bg-white shadow"
+          className="cursor-pointer overflow-hidden rounded-lg bg-white shadow transition-all duration-200 ease-in-out hover:scale-105"
         >
           <Image
             width={200}
